@@ -1,57 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import Vibrant from 'node-vibrant';
+import { Palette } from 'vibrant/lib/color';
+
 import { useSummonerData } from '@/application/usecases/getSummonerData';
 import { LoadingState } from '@/presentation/components/LoadingState';
 import { ErrorState } from '@/presentation/components/ErrorState';
 import { SkinsCarousel } from '@/presentation/components/SkinsCarousel';
+import { InteractiveBackground } from '@/presentation/components/InteractiveBackground';
 
 export function ShowcasePage() {
-    const params = useParams<{
-        platformRegion: string;
-        gameName: string;
-        tagLine: string;
-    }>();
-
+    const params = useParams<{ platformRegion: string; gameName: string; tagLine: string }>();
     const { data, isLoading, isError, error } = useSummonerData({
         platformRegion: params.platformRegion!,
         gameName: params.gameName!,
         tagLine: params.tagLine!,
     });
 
-    if (isLoading) {
-        return <LoadingState />;
-    }
+    const [selectedSkinUrl, setSelectedSkinUrl] = useState<string | null>(null);
+    const [palette, setPalette] = useState<Palette | null>(null);
 
-    if (isError) {
-        return <ErrorState message={error.message} />;
-    }
+    useEffect(() => {
+        if (selectedSkinUrl) {
+            Vibrant.from(selectedSkinUrl).getPalette((err, palette) => {
+                if (!err && palette) {
+                    setPalette(palette);
+                }
+            });
+        }
+    }, [selectedSkinUrl]);
 
-    if (!data?.mainChampion) {
-        return (
-            <div>
-                <h2>Bem-vindo, {data?.gameName} #{data?.tagLine}</h2>
-                <p>Nível de Invocador: {data?.summonerLevel}</p>
-                <p>Nenhum campeão com maestria encontrado para este jogador.</p>
-            </div>
-        )
-    }
+
+    if (isLoading) return <LoadingState />;
+    if (isError) return <ErrorState message={error.message} />;
+    if (!data?.mainChampion) { /* ... (código para sem maestria) ... */ }
 
     return (
-        <div>
-            {}
-            <h2>Bem-vindo, {data.gameName} #{data.tagLine}</h2>
-            <p>Nível de Invocador: {data.summonerLevel}</p>
+        <div style={{ position: 'relative', zIndex: 1 }}>
+            <InteractiveBackground palette={{
+                DarkVibrant: palette?.DarkVibrant?.hex,
+                Vibrant: palette?.Vibrant?.hex,
+            }} />
 
-            <hr />
+            <header>
+                <h2>Bem-vindo, {data.gameName} #{data.tagLine}</h2>
+                <p>Nível de Invocador: {data.summonerLevel}</p>
+            </header>
 
-            {}
-            <h3>{data.mainChampion.name}</h3>
-            <p><em>{data.mainChampion.title}</em></p>
-            <p>Maestria {data.mainChampion.masteryLevel} com {data.mainChampion.masteryPoints.toLocaleString('pt-BR')} pontos</p>
+            <section>
+                <h3>{data.mainChampion.name}</h3>
+                <p><em>{data.mainChampion.title}</em></p>
+            </section>
 
             <SkinsCarousel
                 skins={data.mainChampion.skins}
-                championName={data.mainChampion.name}
+                onSkinSelect={setSelectedSkinUrl}
             />
         </div>
     );
