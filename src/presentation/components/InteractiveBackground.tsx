@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Canvas, extend, useFrame, ReactThreeFiber } from '@react-three/fiber';
+import { Canvas, extend, useFrame, ReactThreeFiber, useThree } from '@react-three/fiber';
 import { shaderMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -57,6 +57,7 @@ interface BackgroundShaderProps {
 
 function BackgroundShader({ palette }: BackgroundShaderProps) {
     const materialRef = useRef<GradientMaterialType>(null!);
+    const { viewport } = useThree();
 
     useFrame((_, delta) => {
         if (materialRef.current) {
@@ -68,8 +69,8 @@ function BackgroundShader({ palette }: BackgroundShaderProps) {
     const colorB = new THREE.Color(palette?.Vibrant || '#f0f');
 
     return (
-        <mesh>
-            <planeGeometry args={[2, 2]} />
+        <mesh scale={[viewport.width, viewport.height, 1]}>
+            <planeGeometry args={[1, 1]} />
             <gradientMaterial ref={materialRef} u_colorA={colorA} u_colorB={colorB} />
         </mesh>
     );
@@ -77,7 +78,17 @@ function BackgroundShader({ palette }: BackgroundShaderProps) {
 
 export function InteractiveBackground({ palette }: BackgroundShaderProps) {
     return (
-        <Canvas style={{ position: 'fixed', top: 0, left: 0, zIndex: -1 }}>
+        // Verifique se a prop 'style' está exatamente assim:
+        <Canvas
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                zIndex: -1
+            }}
+        >
             <BackgroundShader palette={palette} />
         </Canvas>
     );

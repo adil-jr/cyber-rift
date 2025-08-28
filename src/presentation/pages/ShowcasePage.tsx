@@ -8,6 +8,7 @@ import { LoadingState } from '@/presentation/components/LoadingState';
 import { ErrorState } from '@/presentation/components/ErrorState';
 import { SkinsCarousel } from '@/presentation/components/SkinsCarousel';
 import { InteractiveBackground } from '@/presentation/components/InteractiveBackground';
+import styles from './ShowcasePage.module.css';
 
 export function ShowcasePage() {
     const params = useParams<{ platformRegion: string; gameName: string; tagLine: string }>();
@@ -36,7 +37,7 @@ export function ShowcasePage() {
     if (!data?.mainChampion) { /* ... (código para sem maestria) ... */ }
 
     return (
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        <div className={styles.container}>
             <InteractiveBackground palette={{
                 DarkVibrant: palette?.DarkVibrant?.hex,
                 Vibrant: palette?.Vibrant?.hex,

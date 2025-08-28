@@ -1,17 +1,55 @@
 .embla {
     overflow: hidden;
+    max-width: 1200px;
+    margin: 2rem auto;
+    width: 100%;
 }
 .embla__container {
     display: flex;
 }
+
 .embla__slide {
+    position: relative;
     flex: 0 0 80%;
     min-width: 0;
-    margin-left: 1rem;
-}
-.embla__slide img {
-    width: 100%;
-    height: auto;
-    display: block;
+    margin: 0 1rem;
     border-radius: 8px;
+    overflow: hidden;
+
+    aspect-ratio: 16 / 9;
+}
+
+.embla__slide img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.embla__slide p {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(3, 1, 15, 0.9), transparent);
+    color: white;
+    padding: 1.5rem 1rem 1rem;
+    margin: 0;
+    text-align: center;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+@media (min-width: 768px) {
+    .embla__slide {
+        flex-basis: 45%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .embla__slide {
+        flex-basis: 30%;
+    }
 }

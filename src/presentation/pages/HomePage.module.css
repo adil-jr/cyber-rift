@@ -1,0 +1,86 @@
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 500px;
+}
+
+.formGroup {
+    display: flex;
+    align-items: center;
+    background-color: rgba(10, 2, 20, 0.8);
+    border: 1px solid var(--color-neon-magenta);
+    border-radius: 4px;
+    padding: 0.5rem;
+    transition: box-shadow 0.3s ease;
+}
+
+.formGroup:focus-within {
+    box-shadow: 0 0 10px var(--color-neon-magenta);
+}
+
+.regionSelect,
+.riotIdInput {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    font-family: var(--font-primary);
+    font-size: 1rem;
+    outline: none;
+}
+
+.regionSelect {
+    padding: 0.5rem;
+    border-right: 1px solid var(--color-neon-magenta);
+    cursor: pointer;
+}
+
+.riotIdInput {
+    width: 100%;
+    padding: 0.5rem 1rem;
+}
+
+.taglineSeparator {
+    font-size: 1.5rem;
+    color: var(--color-text-dark);
+    padding: 0 0.5rem;
+}
+
+.submitButton {
+    background-color: var(--color-neon-magenta);
+    border: none;
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: var(--font-primary);
+    font-size: 1.2rem;
+    color: var(--color-black);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+.submitButton:hover,
+.submitButton:focus {
+    background-color: white;
+    color: var(--color-neon-magenta);
+    box-shadow: 0 0 20px var(--color-neon-magenta);
+}
