@@ -38,7 +38,6 @@ const app = new Elysia()
     .get('/api/health', () => {
         return { status: 'ok', server: 'Elysia', timestamp: Date.now() };
     })
-
     .get(
         '/api/summoner/by-riot-id/:platformRegion/:gameName/:tagLine',
         async ({ params, set }) => {
@@ -48,8 +47,6 @@ const app = new Elysia()
                 const encodedTagLine = encodeURIComponent(params.tagLine);
 
                 const accountApiUrl = `https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodedGameName}/${encodedTagLine}`;
-                console.log(`Buscando PUUID em: ${accountApiUrl}`);
-
                 const accountResponse = await fetch(accountApiUrl, {
                     headers: { 'X-Riot-Token': RIOT_API_KEY },
                 });
@@ -62,8 +59,6 @@ const app = new Elysia()
                 const puuid = accountData.puuid;
 
                 const summonerApiUrl = `https://${params.platformRegion}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`;
-                console.log(`Buscando dados do Summoner em: ${summonerApiUrl}`);
-
                 const summonerResponse = await fetch(summonerApiUrl, {
                     headers: { 'X-Riot-Token': RIOT_API_KEY },
                 });
@@ -74,12 +69,33 @@ const app = new Elysia()
                 }
                 const summonerData = await summonerResponse.json();
 
+                const masteryApiUrl = `https://${params.platformRegion}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/${puuid}/top`;
+                console.log(`Buscando maestria em: ${masteryApiUrl}`);
+
+                const masteryResponse = await fetch(masteryApiUrl, {
+                    headers: { 'X-Riot-Token': RIOT_API_KEY },
+                });
+
+                if (!masteryResponse.ok) {
+                    set.status = masteryResponse.status;
+                    return { error: 'Não foi possível buscar a maestria de campeão.', details: await masteryResponse.json() };
+                }
+                const masteryData = await masteryResponse.json();
+
+                const mainChampion = masteryData.length > 0 ? {
+                    championId: masteryData[0].championId,
+                    masteryLevel: masteryData[0].championLevel,
+                    masteryPoints: masteryData[0].championPoints
+                } : null;
+
+
                 return {
                     puuid: summonerData.puuid,
                     gameName: accountData.gameName,
                     tagLine: accountData.tagLine,
                     profileIconId: summonerData.profileIconId,
                     summonerLevel: summonerData.summonerLevel,
+                    mainChampion: mainChampion,
                 };
 
             } catch (error) {
